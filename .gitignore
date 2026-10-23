@@ -1,0 +1,30 @@
+# Gradle
+.gradle/
+build/
+!src/**/build/
+.kotlin/
+
+# Local configuration
+local.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.fleet/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# iOS / Xcode
+iosApp/build/
+xcuserdata/
+*.xcuserstate
+DerivedData/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+iosApp/Pods/
+
+# Logs
+*.log
+captures/

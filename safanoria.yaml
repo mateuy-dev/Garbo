@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mateuy-dev/safanoria/main/schema/safanoria.schema.json
+safanoria: 1
+dir: tickets
+mainBranch: master
+worktree: ../{id}
+components:
+  app:
+    version: { file: gradle.properties, property: version }
