@@ -2,11 +2,11 @@
 id: vault-and-cards
 type: feature
 title: "Vault, owners and cards"
-status: backlog
+status: in-progress
 priority: medium
 size: L
 created: 2026-10-23
-updated: 2026-10-23
+updated: 2026-10-24
 ---
 
 ## Objective
@@ -45,3 +45,4 @@ Not in this change, but the format must leave room for them (planned as separate
 
 ## Work Log
 
+- **2026-10-24** · status · started
