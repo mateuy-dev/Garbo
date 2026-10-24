@@ -9,7 +9,7 @@
 
 - [x] 2.1 Define `VaultFiles` (relative paths: list, exists, readBytes, writeBytesAtomic, createDir, deleteRecursive, moveDir) and an in-memory implementation in `commonTest`; verify with a `commonTest` contract test suite (write/read, atomic write leaves no temp file, move, recursive delete, listing excludes nothing)
 - [x] 2.2 Implement `VaultFiles` for JVM with kotlinx-io (`.<name>.tmp` + `atomicMove`) and run the same contract suite against a temp directory in `jvmTest`; verify `./gradlew :sharedUI:jvmTest` passes
-- [ ] 2.3 Implement `VaultFiles` for iOS with kotlinx-io wrapped in security-scoped access on the root URL; verify the contract suite passes in `iosSimulatorArm64Test` against the simulator's temp directory
+- [x] 2.3 Implement `VaultFiles` for iOS with kotlinx-io wrapped in security-scoped access on the root URL; verify the contract suite passes in `iosSimulatorArm64Test` against the simulator's temp directory
 - [ ] 2.4 Implement `VaultFiles` for Android on a SAF tree URI (`DocumentsContract`, cached document ids, delete-then-rename replace, `moveDocument` on API 24+ and copy-then-delete on 23); verify with an instrumented or manual check on an emulator picking a folder in Downloads: create, overwrite, move and delete files and inspect them in the Files app
 
 ## 3. Format layer
