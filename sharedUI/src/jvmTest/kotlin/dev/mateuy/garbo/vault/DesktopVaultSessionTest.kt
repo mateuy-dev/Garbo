@@ -41,15 +41,15 @@ class DesktopVaultSessionTest {
         assertEquals(setOf("Me", "Anna"), open.snapshot.owners.map { it.name }.toSet())
     }
 
+    // Deleted, not moved: on macOS the bookmark follows a moved folder, and the vault reopens.
     @Test
-    fun movedVaultShowsSetupWithReason() = runTest {
+    fun deletedVaultShowsSetupWithReason() = runTest {
         launch().create(PlatformFile(root).toPickedFolder())
-        root.renameTo(root.resolveSibling(root.name + "-moved").also { it.deleteOnExit() })
+        root.deleteRecursively()
 
         val next = launch()
         next.restore()
-        assertIs<VaultState.Closed>(next.repository.state.value).error.let { assertIs<VaultError>(it) }
+        assertIs<VaultError>(assertIs<VaultState.Closed>(next.repository.state.value).error)
         assertEquals(null, SettingsVaultStore(PreferencesSettings(preferences)).load())
-        root.resolveSibling(root.name + "-moved").deleteRecursively()
     }
 }
