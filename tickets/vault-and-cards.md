@@ -46,3 +46,8 @@ Not in this change, but the format must leave room for them (planned as separate
 ## Work Log
 
 - **2026-10-24** · status · started
+- **2026-10-24** · OpenSpec change `vault-and-cards` proposed (specs: vault, owners, cards). Assumed, pending review: card types `loyalty/membership/library/id/other`; owner folder named by a slug of the name at creation; photos re-encoded as JPEG ≤ 2048 px; owner deletable only when empty and not default; reload on resume/refresh rather than file watching; unknown YAML fields preserved on rewrite (room for card-encryption).
+- **2026-10-24** · Photos use `FileKit.compressImage` (already a dependency for the pickers) instead of per-platform resize/encode code; per-platform fallback only where it falls short (aspect ratio, JPEG output, platform support, iOS HEIC).
+- **2026-10-24** · One path-based `VaultFiles` in common code (kotlinx-io works on desktop and iOS), plus a SAF one for Android; the SAF document-id cache is cleared and the call retried once on any failure, since a sync tool can change the tree under it.
+- **2026-10-24** · A `card.yaml` without `type` loads as `other`; a remembered vault that fails to reopen is forgotten, and the setup screen shows why.
+- **2026-10-24** · Screens are verified with Compose UI tests on the desktop runtime against real temp folders (the native pickers are bypassed through the session), not by hand; Android and iOS device checks (tasks 2.3, 2.4, 5.2, 7.2, 7.3) are still open.

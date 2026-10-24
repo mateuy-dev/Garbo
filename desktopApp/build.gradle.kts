@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     implementation(project(":sharedUI"))
+    implementation(libs.filekit.core)
 }
 
 compose.desktop {

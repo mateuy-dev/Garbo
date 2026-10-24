@@ -43,9 +43,12 @@ kotlin {
             implementation(libs.compose.nav3)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.coil)
-            implementation(libs.coil.network.ktor)
             implementation(libs.multiplatformSettings)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.snakeyaml.engine.kmp)
+            implementation(libs.kotlinx.io.core)
+            implementation(libs.filekit.core)
+            implementation(libs.filekit.dialogs.compose)
         }
 
         commonTest.dependencies {
