@@ -2,7 +2,7 @@
 id: vault-and-cards
 type: feature
 title: "Vault, owners and cards"
-status: in-progress
+status: review
 priority: medium
 size: L
 created: 2026-10-23
@@ -59,3 +59,4 @@ Not in this change, but the format must leave room for them (planned as separate
 - **2026-10-24** · decision · Screens are verified with Compose UI tests on the desktop runtime against real temp folders (the native pickers are bypassed through the session), not by hand; Android and iOS device checks (tasks 2.3, 2.4, 5.2, 7.2, 7.3) are still open.
 - **2026-10-25** · decision · Card types replaced by one "Identity document" switch (`type: id`), needed for future exports and as the encryption default; categories are not base functionality. The form no longer asks for a code format (users don't know it): `code.format` stays as data written by scanning and used by display/exports, dropped when the value is edited; `codabar` added, `text` removed. Encryption gets its own switch in card-encryption, on by default for ids.
 - **2026-10-25** · decision · Merged at the user's request with the Android/iOS device checks (tasks 2.4, 5.2, 7.2, 7.3) still open; they move to the backlog ticket `phone-checks`, one combined phone session with card-display and card-encryption. The OpenSpec change is archived with those 4 tasks unchecked.
+- **2026-10-25** · status · review
