@@ -14,7 +14,7 @@
 
 ## 3. Format layer
 
-- [x] 3.1 Add the YAML map round-trip (load ordered map, dump map) and mappers for `vault.yaml`, `owner.yaml` and `card.yaml` that keep the original map; verify `commonTest` cases: unknown fields survive an edit in place (specs/vault "Preserve unknown fields"), unknown `type` is shown as `other` and written back unchanged (specs/cards "Card types"), clearing the code removes `code`, blank names are rejected
+- [x] 3.1 Add the YAML map round-trip (load ordered map, dump map) and mappers for `vault.yaml`, `owner.yaml` and `card.yaml` that keep the original map; verify `commonTest` cases: unknown fields survive an edit in place (specs/vault "Preserve unknown fields"), an unknown `type` loads as a regular card and is written back unchanged (specs/cards "Identity documents"), clearing the code removes `code`, blank names are rejected
 - [x] 3.2 Add the owner folder slug function and UUID helpers; verify `commonTest` cases: "Anna López" → `anna-lopez`, collision → `anna-lopez-2`, all-symbol name → `owner`
 
 ## 4. Vault repository
@@ -33,8 +33,9 @@
 
 - [x] 6.1 Replace the template `App.kt` with navigation3 setup, `AppGraph`, the `Setup` screen and the root `LifecycleResumeEffect` reload; remove template strings and drawables; verify on desktop: first launch shows Create/Open, cancelling the picker stays on setup, creating in an empty folder opens an empty list
 - [x] 6.2 Build `CardList` (sorted by name, owner filter chips with "All", owner color, thumbnail, empty state, refresh action, problems banner); verify on desktop with a vault prepared by hand: filter by owner, add a card folder in a file manager and refresh, break a `card.yaml` and see the banner
-- [x] 6.3 Build `CardDetail` and `CardEdit` (owner pre-selected from the filter or default, type and code format pickers, photo import/replace/remove, discard writes nothing, delete with confirmation); verify on desktop every scenario of specs/cards "Create and edit cards", "Card photos" and "Delete a card", inspecting the files on disk
+- [x] 6.3 Build `CardDetail` and `CardEdit` (owner pre-selected from the filter or default, identity-document switch, code value only, photo import/replace/remove, discard writes nothing, delete with confirmation); verify on desktop every scenario of specs/cards "Create and edit cards", "Card photos" and "Delete a card", inspecting the files on disk
 - [x] 6.4 Build `Owners` (list with counts, create/edit dialog with palette, set default, delete refusals) and `Settings` (vault location, close vault); verify on desktop every scenario of specs/owners "Manage owners", "Default owner" and "Delete an owner"
+- [ ] 6.5 Replace card types with the identity-document switch and remove the format picker (model, editor, list/detail badge, labels, strings; `codabar` added, `text` removed; format dropped when the value changes); verify the format and vault tests for the new scenarios in specs/cards "Identity documents" and "Card code", and update the UI tests
 
 ## 7. Integration
 

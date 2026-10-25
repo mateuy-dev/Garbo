@@ -18,7 +18,7 @@ Each card SHALL be a subfolder of exactly one owner folder, named by the card's 
 - **THEN** only `name` in `card.yaml` changes and the folder stays where it was
 
 ### Requirement: Card fields
-`card.yaml` SHALL hold `cardId` (UUID), `name` (required, non-blank), `type`, an optional `code` with `format` and `value`, and optional `notes`. A card SHALL be valid without a code and without photos.
+`card.yaml` SHALL hold `cardId` (UUID), `name` (required, non-blank), an optional `type`, an optional `code` with a `value` and an optional `format`, and optional `notes`. A card SHALL be valid without a code and without photos.
 
 #### Scenario: Card with only a name
 - **WHEN** the user saves a card named "Gym" with no code, notes or photos
@@ -28,20 +28,33 @@ Each card SHALL be a subfolder of exactly one owner folder, named by the card's 
 - **WHEN** the user tries to save a card with a blank name
 - **THEN** Garbo refuses and asks for a name
 
-### Requirement: Card types
-The `type` SHALL be one of `loyalty`, `membership`, `library`, `id` or `other`; new cards default to `loyalty`. A card whose `type` is unknown to this version SHALL be shown as `other` and its stored value SHALL be kept unless the user changes the type.
+### Requirement: Identity documents
+A card SHALL be marked as an identity document or not, with `type: id` in `card.yaml`; a card that is not one has no `type`. New cards are not identity documents. Any other `type` value SHALL load as a regular card and be kept unless the user marks the card as an identity document or unmarks it.
+
+#### Scenario: Mark an id
+- **WHEN** the user turns on "Identity document" on a card and saves
+- **THEN** `card.yaml` has `type: id`
+- **AND** the card shows an "ID" badge in the list and on its detail
 
 #### Scenario: Unknown type from a newer version
 - **WHEN** a `card.yaml` has `type: passport` and the user edits only its notes
-- **THEN** the card shows as "Other" and the rewritten file still has `type: passport`
+- **THEN** the card shows as a regular card and the rewritten file still has `type: passport`
 
 ### Requirement: Card code
-The code SHALL be entered as text with a format chosen from `qr`, `code128`, `code39`, `ean13`, `ean8`, `upca`, `pdf417`, `aztec`, `datamatrix` or `text` (no barcode). A code SHALL have a non-blank value; clearing the value removes the code from the card. The code SHALL be shown as text on the card detail.
+The user SHALL enter only the code's non-blank value; clearing it removes the code. `code` MAY also hold a `format` (`qr`, `code128`, `code39`, `codabar`, `ean13`, `ean8`, `upca`, `pdf417`, `aztec`, `datamatrix`) written by other features such as scanning; none means unknown. Garbo SHALL keep the code's other fields while the value is unchanged and SHALL remove `format` when the value changes. The detail SHALL show the value, not the format.
 
-#### Scenario: Add a loyalty code
-- **WHEN** the user enters value `2401234567890` with format `ean13` and saves
-- **THEN** `card.yaml` has `code` with `format: ean13` and `value: "2401234567890"`
+#### Scenario: Add a code
+- **WHEN** the user enters value `2401234567890` and saves
+- **THEN** `card.yaml` has `code` with `value: "2401234567890"` and no `format`
 - **AND** the card detail shows `2401234567890`
+
+#### Scenario: Keep a scanned format
+- **WHEN** a card has `code` with `format: ean13` and the user edits only its notes
+- **THEN** the rewritten file still has `format: ean13`
+
+#### Scenario: Changing the value drops the format
+- **WHEN** a card has `code` with `format: ean13` and the user changes the value and saves
+- **THEN** `code` has the new value and no `format`
 
 #### Scenario: Remove the code
 - **WHEN** the user clears the code value and saves
@@ -63,7 +76,7 @@ A card SHALL have at most one front and one back photo, each optional, added by 
 - **THEN** Garbo shows an error and the card's photos are unchanged
 
 ### Requirement: Card list
-The main screen SHALL list all cards of the vault sorted by name, each showing its name, type, owner (name and color) and front photo thumbnail when present. The list SHALL be filterable by owner, with "All" as the initial filter.
+The main screen SHALL list all cards of the vault sorted by name, each showing its name, an "ID" badge for identity documents, its owner (name and color) and front photo thumbnail when present. The list SHALL be filterable by owner, with "All" as the initial filter.
 
 #### Scenario: Filter by owner
 - **WHEN** the user selects owner "Anna" in the filter

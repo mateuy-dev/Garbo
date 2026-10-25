@@ -35,7 +35,13 @@ FileKit (`io.github.vinceglb:filekit-dialogs-compose`) provides the folder picke
 ### YAML: snakeyaml-engine-kmp with a map round-trip
 Files are loaded into an ordered `Map<String, Any?>`; a mapper reads the known fields into the model (`VaultInfo`, `Owner`, `Card`) and keeps the original map. Saving copies the original map, overwrites or removes only the known keys and dumps it, so unknown fields survive in their original order (specs/vault "Preserve unknown fields"). Alternative: kaml with `@Serializable` classes; typed, but unknown keys are either an error or dropped, and keeping them needs a custom tree merge anyway.
 
-Card `type` and `code.format` are kept as raw strings in the model plus an enum view, so an unknown `type: passport` is shown as `other` but written back unchanged unless edited.
+Card `type` and `code.format` are kept as raw strings in the model. The model exposes `isId` (`type == id`) and an optional known-format view. Unknown values are written back unchanged unless the user toggles the id switch, and editing the code value drops `format`.
+
+### Code format is data, not input
+Users don't know barcode symbologies, so the form only asks for the code's value. `code.format` is recorded by card-capture (the scanner reports it) and used by card-display and exports; a card without it has an unknown format. `codabar` is in the known list because it is the usual library-card format; `text` is dropped because no format already means "not known". Alternative: a format picker or guessing from the digits; rejected, users can't answer it and guesses fail for library cards.
+
+### Identity documents, not card types
+The only kind that matters now is "identity document" (`type: id`), used by future exports and as the default for encryption. Categories may come later as a separate feature. Encryption is not tied to ids: card-encryption adds its own "Protect with password" switch, on by default for ids, and reads a card's protected state from its files (`secret.yaml.enc`).
 
 ### Identity and naming
 `kotlin.uuid.Uuid.random()` (stdlib) for vault, owner and card ids. Card folders are named by the `cardId`; owner folders by a slug (lowercase ASCII after a small Latin diacritics table, other characters to `-`, collapsed, fallback `owner`, `-2`, `-3`... on collision). Identity is always read from the YAML, so a folder name is only a hint.
@@ -50,7 +56,7 @@ Writes go to a hidden `.card.yaml.tmp` sibling, then replace the target. SAF has
 Imported images go through `FileKit.compressImage` (bytes, JPEG, quality 85, `maxWidth`/`maxHeight` 2048), already available through the FileKit dependency used for the pickers, so there is no per-platform image code. The first photo task checks that it (a) keeps the aspect ratio, (b) can output JPEG, (c) works on Android, iOS and JVM, and (d) decodes HEIC on iOS. Any platform where a check fails gets an `expect/actual` fallback for that platform only: Android `BitmapFactory`/`Bitmap.compress`, iOS `UIImage`/`UIImageJPEGRepresentation`, JVM Skia. Undecodable input is reported as an error. Display uses Coil with the `ByteArray` read from `VaultFiles`. The unused `coil-network-ktor` dependency is removed (Garbo makes no network requests).
 
 ### UI structure
-navigation3 with screens: `Setup`, `CardList` (owner filter chips, refresh action, problems banner), `CardDetail`, `CardEdit` (create/edit; owner, type, code format pickers; photo import/remove), `Owners` (list with counts, create/edit dialog, set default, delete) and `Settings` (vault location, close vault). One ViewModel per screen, created from a small hand-written `AppGraph` holding the repository and settings; no DI framework. Reload on resume uses `LifecycleResumeEffect` at the app root. The template demo content, strings and drawables are removed; theme files are kept.
+navigation3 with screens: `Setup`, `CardList` (owner filter chips, refresh action, problems banner), `CardDetail`, `CardEdit` (create/edit; owner picker, identity-document switch, code value; photo import/remove), `Owners` (list with counts, create/edit dialog, set default, delete) and `Settings` (vault location, close vault). One ViewModel per screen, created from a small hand-written `AppGraph` holding the repository and settings; no DI framework. Reload on resume uses `LifecycleResumeEffect` at the app root. The template demo content, strings and drawables are removed; theme files are kept.
 
 ## Risks / Trade-offs
 
