@@ -1,7 +1,95 @@
 <resources>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">Open github</string>
-    <string name="run">Run</string>
-    <string name="stop">Stop</string>
-    <string name="theme">Theme</string>
+    <string name="app_name">Garbo</string>
+
+    <!-- Common actions -->
+    <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_ok">OK</string>
+    <string name="action_refresh">Refresh</string>
+
+    <!-- Setup -->
+    <string name="setup_intro">Garbo keeps your cards in a folder you choose. Pick an empty folder for a new vault, or a folder that already holds one, for example synced with Dropbox.</string>
+    <string name="setup_create">Create vault</string>
+    <string name="setup_open">Open vault</string>
+    <string name="setup_open_instead_title">This folder already holds a vault</string>
+    <string name="setup_open_instead_text">Do you want to open it instead?</string>
+    <string name="setup_open_instead">Open it</string>
+
+    <!-- Vault errors -->
+    <string name="error_not_a_vault">This folder is not a Garbo vault.</string>
+    <string name="error_folder_not_empty">Pick an empty folder to create a vault.</string>
+    <string name="error_unsupported_format">This vault was made by a newer version of Garbo (format %1$d). Update Garbo to open it.</string>
+    <string name="error_unreadable">The vault could not be read: %1$s</string>
+    <string name="error_unreachable">The vault could not be opened. It may have been moved or deleted, or access to it was revoked.</string>
+    <string name="error_blank_name">A name is required.</string>
+    <string name="error_owner_has_cards">This owner still has cards. Move or delete them first.</string>
+    <string name="error_owner_is_default">This is the default owner. Choose another default first.</string>
+    <string name="error_not_found">This was changed or removed outside Garbo. Refresh and try again.</string>
+    <string name="error_io">Could not access the vault files: %1$s</string>
+    <string name="error_not_an_image">This file is not a supported image.</string>
+
+    <!-- Card list -->
+    <string name="cards_filter_all">All</string>
+    <string name="cards_empty">No cards yet.</string>
+    <string name="cards_add">Add card</string>
+    <string name="cards_owners">Owners</string>
+    <string name="cards_settings">Settings</string>
+    <string name="problems_malformed">Unreadable file</string>
+    <string name="problems_duplicate_owner">Duplicate owner (same id as another folder)</string>
+    <string name="problems_duplicate_card">Duplicate card (same id as %1$s)</string>
+    <string name="problems_recovered">Restored after an interrupted save</string>
+
+    <!-- Card types -->
+
+    <!-- Code formats -->
+
+    <!-- Card detail and editor -->
+    <string name="card_new">New card</string>
+    <string name="card_edit">Edit card</string>
+    <string name="card_name">Name</string>
+    <string name="card_owner">Owner</string>
+    <string name="card_identity">Identity document</string>
+    <string name="card_id_badge">ID</string>
+    <string name="card_code_value">Code</string>
+    <string name="card_notes">Notes</string>
+    <string name="card_front">Front</string>
+    <string name="card_back">Back</string>
+    <string name="card_photo_add">Import</string>
+    <string name="card_photo_replace">Replace</string>
+    <string name="card_photo_remove">Remove</string>
+    <string name="card_no_code">No code</string>
+    <string name="card_delete_title">Delete this card?</string>
+    <string name="card_delete_text">%1$s and its photos will be removed from the vault.</string>
+    <string name="card_gone">This card is no longer in the vault.</string>
+
+    <!-- Owners -->
+    <string name="owners_title">Owners</string>
+    <string name="owners_add">Add owner</string>
+    <string name="owners_default">Default</string>
+    <string name="owners_make_default">Make default</string>
+    <string name="owner_new">New owner</string>
+    <string name="owner_edit">Edit owner</string>
+    <string name="owner_name">Name</string>
+    <string name="owner_color">Color</string>
+    <string name="owner_delete_title">Delete %1$s?</string>
+    <string name="owner_delete_text">The owner's folder will be removed from the vault.</string>
+    <string name="owner_unknown">Unknown owner</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_vault_location">Vault folder</string>
+    <string name="settings_close_vault">Close vault</string>
+    <string name="settings_close_vault_text">Garbo will forget this vault on this device. Its files stay in the folder, and you can open it again later.</string>
+
+    <plurals name="problems_title">
+        <item quantity="one">%1$d item in the vault could not be read</item>
+        <item quantity="other">%1$d items in the vault could not be read</item>
+    </plurals>
+    <plurals name="owners_cards">
+        <item quantity="one">%1$d card</item>
+        <item quantity="other">%1$d cards</item>
+    </plurals>
 </resources>
