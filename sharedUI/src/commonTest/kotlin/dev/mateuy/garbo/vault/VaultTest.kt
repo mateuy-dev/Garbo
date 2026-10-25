@@ -322,12 +322,39 @@ class VaultTest {
     fun addAndRemoveCode() {
         val vault = newVault()
         val me = vault.load().owners.single()
-        val code = CardCode(CodeFormat.EAN13.id, "2401234567890")
-        val card = vault.saveCard(CardDraft(null, me.ownerId, "Shop", code = code), null, listOf(me))
-        assertEquals(code, vault.load().cards.single().code?.copy(yaml = emptyMap()))
-        val cleared = CardDraft(card.cardId, me.ownerId, "Shop", code = CardCode(CodeFormat.EAN13.id, " "))
+        val card = vault.saveCard(CardDraft(null, me.ownerId, "Shop", codeValue = " 2401234567890 "), null, listOf(me))
+        assertEquals(CardCode("2401234567890"), vault.load().cards.single().code?.copy(yaml = emptyMap()))
+        assertFalse("format" in files.readText("${card.folder}/card.yaml"))
+        val cleared = CardDraft(card.cardId, me.ownerId, "Shop", codeValue = " ")
         vault.saveCard(cleared, card, listOf(me))
         assertFalse("code" in files.readText("${card.folder}/card.yaml"))
+    }
+
+    @Test
+    fun scannedFormatIsKeptUntilTheValueChanges() {
+        val vault = newVault()
+        files.writeText("me/c1/card.yaml", "cardId: c1\nname: Shop\ncode:\n  value: '2401234567890'\n  format: ean13\n  checked: true\n")
+        val card = vault.load().cards.single()
+        vault.saveCard(CardDraft("c1", card.ownerId, "Shop", codeValue = "2401234567890", notes = "x"), card, vault.load().owners)
+        assertEquals("ean13", vault.load().cards.single().code?.format)
+
+        val edited = vault.load().cards.single()
+        vault.saveCard(CardDraft("c1", card.ownerId, "Shop", codeValue = "999"), edited, vault.load().owners)
+        val code = vault.load().cards.single().code!!
+        assertEquals("999", code.value)
+        assertNull(code.format)
+        assertEquals(true, code.yaml["checked"])
+    }
+
+    @Test
+    fun markAndUnmarkAnId() {
+        val vault = newVault()
+        val me = vault.load().owners.single()
+        val card = vault.saveCard(CardDraft(null, me.ownerId, "DNI", isId = true), null, listOf(me))
+        assertTrue("type: id" in files.readText("${card.folder}/card.yaml"))
+        assertTrue(vault.load().cards.single().isId)
+        vault.saveCard(CardDraft(card.cardId, me.ownerId, "DNI"), vault.load().cards.single(), listOf(me))
+        assertFalse("type" in files.readText("${card.folder}/card.yaml"))
     }
 
     @Test
@@ -335,7 +362,7 @@ class VaultTest {
         val vault = newVault()
         files.writeText("me/c1/card.yaml", "cardId: c1\nname: Old\ntype: passport\nexpires: 2030-01-01\n")
         val card = vault.load().cards.single()
-        vault.saveCard(CardDraft("c1", card.ownerId, "New", type = card.type), card, vault.load().owners)
+        vault.saveCard(CardDraft("c1", card.ownerId, "New"), card, vault.load().owners)
         val text = files.readText("me/c1/card.yaml")
         assertTrue("expires: 2030-01-01" in text)
         assertTrue("type: passport" in text)

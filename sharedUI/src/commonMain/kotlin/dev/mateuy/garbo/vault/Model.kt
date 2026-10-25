@@ -29,6 +29,8 @@ data class VaultInfo(
     )
 
     companion object {
+        const val ID_TYPE = "id"
+
         fun parse(text: String): VaultInfo {
             val yaml = Yaml.load(text)
             val version = yaml.requireText("formatVersion").toIntOrNull()
@@ -50,6 +52,8 @@ data class Owner(
     fun toYaml(): String = Yaml.dump(yaml.with("ownerId" to ownerId, "name" to name, "color" to color))
 
     companion object {
+        const val ID_TYPE = "id"
+
         fun parse(text: String, folder: String): Owner {
             val yaml = Yaml.load(text)
             val color = yaml.text("color")?.takeIf { OwnerColors.isValid(it) } ?: OwnerColors.FALLBACK
@@ -71,54 +75,42 @@ object OwnerColors {
     fun isValid(color: String): Boolean = pattern.matches(color)
 }
 
-enum class CardType(val id: String) {
-    LOYALTY("loyalty"),
-    MEMBERSHIP("membership"),
-    LIBRARY("library"),
-    ID("id"),
-    OTHER("other");
-
-    companion object {
-        val DEFAULT = LOYALTY
-
-        /** The type for a stored value; values unknown to this version show as [OTHER]. */
-        fun of(id: String): CardType = entries.firstOrNull { it.id == id } ?: OTHER
-    }
-}
-
+/** Barcode formats this version knows. A card's code may also have none (unknown) or one from a newer version. */
 enum class CodeFormat(val id: String) {
     QR("qr"),
     CODE128("code128"),
     CODE39("code39"),
+    CODABAR("codabar"),
     EAN13("ean13"),
     EAN8("ean8"),
     UPCA("upca"),
     PDF417("pdf417"),
     AZTEC("aztec"),
-    DATAMATRIX("datamatrix"),
-    TEXT("text");
+    DATAMATRIX("datamatrix");
 
     companion object {
-        /** The format for a stored value; values unknown to this version show as [TEXT]. */
-        fun of(id: String): CodeFormat = entries.firstOrNull { it.id == id } ?: TEXT
+        fun of(id: String?): CodeFormat? = entries.firstOrNull { it.id == id }
     }
 }
 
-/** A card's code. [format] is the stored value, kept as is even when unknown to this version. */
+/**
+ * A card's code. The user only enters [value]; [format] is written by other features (scanning) and
+ * kept as is even when unknown to this version. Null means the format is not known.
+ */
 data class CardCode(
-    val format: String,
     val value: String,
+    val format: String? = null,
     val yaml: YamlMap = emptyMap(),
 ) {
-    val codeFormat: CodeFormat get() = CodeFormat.of(format)
+    val codeFormat: CodeFormat? get() = CodeFormat.of(format)
 }
 
 /** A card, read from `<owner folder>/<card folder>/card.yaml`. */
 data class Card(
     val cardId: String,
     val name: String,
-    /** The stored type, kept as is even when unknown to this version; see [cardType]. */
-    val type: String = CardType.DEFAULT.id,
+    /** The stored type: [ID_TYPE], none, or a value from a newer version kept as is; see [isId]. */
+    val type: String? = null,
     val code: CardCode? = null,
     val notes: String? = null,
     /** The owner whose folder holds this card. */
@@ -129,10 +121,11 @@ data class Card(
     val hasBack: Boolean = false,
     val yaml: YamlMap = emptyMap(),
 ) {
-    val cardType: CardType get() = CardType.of(type)
+    /** Whether the card is an identity document. */
+    val isId: Boolean get() = type == ID_TYPE
 
     fun toYaml(): String {
-        val code = code?.let { it.yaml.with("format" to it.format, "value" to it.value) }
+        val code = code?.let { it.yaml.with("value" to it.value, "format" to it.format) }
         return Yaml.dump(
             yaml.with(
                 "cardId" to cardId,
@@ -145,16 +138,18 @@ data class Card(
     }
 
     companion object {
+        const val ID_TYPE = "id"
+
         fun parse(text: String, ownerId: String = "", folder: String = ""): Card {
             val yaml = Yaml.load(text)
             val code = yaml["code"]?.let { raw ->
                 val codeYaml = raw.asYamlMap() ?: throw FormatException("'code' must be a mapping")
-                CardCode(codeYaml.text("format") ?: CodeFormat.TEXT.id, codeYaml.requireText("value"), codeYaml)
+                CardCode(codeYaml.requireText("value"), codeYaml.text("format"), codeYaml)
             }
             return Card(
                 cardId = yaml.requireText("cardId"),
                 name = yaml.requireText("name"),
-                type = yaml.text("type") ?: CardType.OTHER.id,
+                type = yaml.text("type"),
                 code = code,
                 notes = yaml.text("notes"),
                 ownerId = ownerId,

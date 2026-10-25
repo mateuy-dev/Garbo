@@ -113,9 +113,11 @@ private fun CardDetails(card: Card, state: VaultState.Open, modifier: Modifier) 
                 ColorDot(owner.color)
                 Spacer(Modifier.width(8.dp))
                 Text(owner.name, style = MaterialTheme.typography.titleSmall)
-                Text("  ·  ", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Text(card.cardType.label(), style = MaterialTheme.typography.titleSmall)
+            if (card.isId) {
+                Spacer(Modifier.width(12.dp))
+                IdBadge()
+            }
         }
         Field(Res.string.card_code_value) {
             val code = card.code
@@ -123,7 +125,6 @@ private fun CardDetails(card: Card, state: VaultState.Open, modifier: Modifier) 
                 Text(stringResource(Res.string.card_no_code), color = MaterialTheme.colorScheme.onSurfaceVariant)
             } else {
                 SelectionContainer { Text(code.value, style = MaterialTheme.typography.headlineSmall) }
-                Text(code.codeFormat.label(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         card.notes?.let { notes ->

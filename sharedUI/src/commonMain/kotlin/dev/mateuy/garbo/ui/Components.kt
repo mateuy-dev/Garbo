@@ -4,14 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +42,18 @@ internal fun ownerColor(hex: String): Color = Color(0xFF000000 or hex.removePref
 @Composable
 internal fun ColorDot(color: String, modifier: Modifier = Modifier, size: Dp = 12.dp) {
     Box(modifier.size(size).clip(CircleShape).background(ownerColor(color)))
+}
+
+/** Marks a card that is an identity document. */
+@Composable
+internal fun IdBadge() {
+    Surface(shape = RoundedCornerShape(4.dp), color = MaterialTheme.colorScheme.secondaryContainer) {
+        Text(
+            stringResource(Res.string.card_id_badge),
+            Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            style = MaterialTheme.typography.labelMedium,
+        )
+    }
 }
 
 @Composable

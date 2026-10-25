@@ -143,7 +143,7 @@ class AppUiTest {
         assertNull(store.stored)
     }
 
-    // specs/cards: Create and edit cards, Card fields, Card code
+    // specs/cards: Create and edit cards, Card fields, Card code, Identity documents
 
     @Test
     fun createCard() = runComposeUiTest {
@@ -155,23 +155,42 @@ class AppUiTest {
         onNodeWithTag("card-owner").assertExists()
         onNodeWithText("Me").assertExists()
         onNodeWithTag("card-name").performTextInput("Bonpreu")
-        onNodeWithTag("card-format").performClick()
-        onNodeWithText("EAN-13").performClick()
+        onNodeWithText("Code format").assertDoesNotExist()
         onNodeWithTag("card-code").performTextInput("2401234567890")
         screenshot("card-edit")
         onNodeWithText("Save").performClick()
 
         waitForText("2401234567890")
-        onNodeWithText("EAN-13").assertExists()
         screenshot("card-detail")
         val yaml = cardFolders("me").single().resolve("card.yaml").readText()
         assertTrue("name: Bonpreu" in yaml, yaml)
-        assertTrue("format: ean13" in yaml, yaml)
         assertTrue("2401234567890" in yaml, yaml)
+        assertFalse("format" in yaml, yaml)
+        assertFalse("type" in yaml, yaml)
 
         onNodeWithContentDescription("Back").performClick()
         waitForText("Bonpreu")
-        onNodeWithText("Loyalty").assertExists()
+        onNodeWithText("ID").assertDoesNotExist()
+    }
+
+    @Test
+    fun markIdentityDocument() = runComposeUiTest {
+        existingVault()
+        launchApp()
+        waitForText("No cards yet.")
+        onNodeWithContentDescription("Add card").performClick()
+        waitForText("New card")
+        onNodeWithTag("card-name").performTextInput("DNI")
+        onNodeWithTag("card-id").performClick()
+        onNodeWithText("Save").performClick()
+
+        waitForText("ID")
+        val yaml = cardFolders("me").single().resolve("card.yaml").readText()
+        assertTrue("type: id" in yaml, yaml)
+        onNodeWithContentDescription("Back").performClick()
+        waitForText("DNI")
+        onNodeWithText("ID").assertExists()
+        screenshot("card-list-id")
     }
 
     @Test

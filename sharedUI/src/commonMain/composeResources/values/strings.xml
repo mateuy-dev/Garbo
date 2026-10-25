@@ -43,31 +43,16 @@
     <string name="problems_recovered">Restored after an interrupted save</string>
 
     <!-- Card types -->
-    <string name="type_loyalty">Loyalty</string>
-    <string name="type_membership">Membership</string>
-    <string name="type_library">Library</string>
-    <string name="type_id">ID</string>
-    <string name="type_other">Other</string>
 
     <!-- Code formats -->
-    <string name="format_qr">QR code</string>
-    <string name="format_code128">Code 128</string>
-    <string name="format_code39">Code 39</string>
-    <string name="format_ean13">EAN-13</string>
-    <string name="format_ean8">EAN-8</string>
-    <string name="format_upca">UPC-A</string>
-    <string name="format_pdf417">PDF417</string>
-    <string name="format_aztec">Aztec</string>
-    <string name="format_datamatrix">Data Matrix</string>
-    <string name="format_text">Text (no barcode)</string>
 
     <!-- Card detail and editor -->
     <string name="card_new">New card</string>
     <string name="card_edit">Edit card</string>
     <string name="card_name">Name</string>
     <string name="card_owner">Owner</string>
-    <string name="card_type">Type</string>
-    <string name="card_code_format">Code format</string>
+    <string name="card_identity">Identity document</string>
+    <string name="card_id_badge">ID</string>
     <string name="card_code_value">Code</string>
     <string name="card_notes">Notes</string>
     <string name="card_front">Front</string>

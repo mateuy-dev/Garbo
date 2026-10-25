@@ -64,8 +64,9 @@ data class CardDraft(
     val cardId: String?,
     val ownerId: String,
     val name: String,
-    val type: String = CardType.DEFAULT.id,
-    val code: CardCode? = null,
+    val isId: Boolean = false,
+    /** The code's value as entered; blank means no code. */
+    val codeValue: String? = null,
     val notes: String? = null,
     val front: PhotoChange = PhotoChange.Keep,
     val back: PhotoChange = PhotoChange.Keep,
@@ -259,10 +260,16 @@ class Vault private constructor(private val files: VaultFiles) {
 
         val card = base.copy(
             name = name,
-            type = draft.type,
-            // A blank value means no code. Unknown fields of an existing code are kept.
-            code = draft.code?.takeIf { it.value.isNotBlank() }?.let { code ->
-                CardCode(code.format, code.value.trim(), base.code?.yaml.orEmpty())
+            // Toggling the switch sets or clears the type; otherwise a type from a newer version is kept.
+            type = when {
+                draft.isId -> Card.ID_TYPE
+                base.isId -> null
+                else -> base.type
+            },
+            code = draft.codeValue?.trim()?.takeIf { it.isNotBlank() }?.let { value ->
+                val current = base.code
+                // A new value drops the format, which described the old one; other unknown fields are kept.
+                if (current?.value == value) current else CardCode(value, yaml = current?.yaml.orEmpty().with("format" to null))
             },
             notes = draft.notes?.takeIf { it.isNotBlank() },
             ownerId = owner.ownerId,

@@ -35,7 +35,7 @@
 - [x] 6.2 Build `CardList` (sorted by name, owner filter chips with "All", owner color, thumbnail, empty state, refresh action, problems banner); verify on desktop with a vault prepared by hand: filter by owner, add a card folder in a file manager and refresh, break a `card.yaml` and see the banner
 - [x] 6.3 Build `CardDetail` and `CardEdit` (owner pre-selected from the filter or default, identity-document switch, code value only, photo import/replace/remove, discard writes nothing, delete with confirmation); verify on desktop every scenario of specs/cards "Create and edit cards", "Card photos" and "Delete a card", inspecting the files on disk
 - [x] 6.4 Build `Owners` (list with counts, create/edit dialog with palette, set default, delete refusals) and `Settings` (vault location, close vault); verify on desktop every scenario of specs/owners "Manage owners", "Default owner" and "Delete an owner"
-- [ ] 6.5 Replace card types with the identity-document switch and remove the format picker (model, editor, list/detail badge, labels, strings; `codabar` added, `text` removed; format dropped when the value changes); verify the format and vault tests for the new scenarios in specs/cards "Identity documents" and "Card code", and update the UI tests
+- [x] 6.5 Replace card types with the identity-document switch and remove the format picker (model, editor, list/detail badge, labels, strings; `codabar` added, `text` removed; format dropped when the value changes); verify the format and vault tests for the new scenarios in specs/cards "Identity documents" and "Card code", and update the UI tests
 
 ## 7. Integration
 

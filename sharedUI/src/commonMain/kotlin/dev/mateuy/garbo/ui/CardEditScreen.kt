@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -27,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
@@ -35,10 +38,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.mateuy.garbo.vault.Card
-import dev.mateuy.garbo.vault.CardCode
 import dev.mateuy.garbo.vault.CardDraft
-import dev.mateuy.garbo.vault.CardType
-import dev.mateuy.garbo.vault.CodeFormat
 import dev.mateuy.garbo.vault.NotAnImageException
 import dev.mateuy.garbo.vault.PhotoChange
 import dev.mateuy.garbo.vault.PhotoSide
@@ -75,9 +75,7 @@ internal class CardEditViewModel(
     var name by mutableStateOf(existing?.name.orEmpty())
     var ownerId by mutableStateOf(existing?.ownerId ?: ownerId ?: snapshot.defaultOwner?.ownerId.orEmpty())
 
-    /** The stored type: kept as is (even if unknown to this version) unless the user picks one. */
-    var type by mutableStateOf(existing?.type ?: CardType.DEFAULT.id)
-    var codeFormat by mutableStateOf(existing?.code?.format ?: CodeFormat.QR.id)
+    var isId by mutableStateOf(existing?.isId == true)
     var codeValue by mutableStateOf(existing?.code?.value.orEmpty())
     var notes by mutableStateOf(existing?.notes.orEmpty())
     var front by mutableStateOf(PhotoEdit())
@@ -127,8 +125,8 @@ internal class CardEditViewModel(
             cardId = existing?.cardId,
             ownerId = ownerId,
             name = name,
-            type = type,
-            code = CardCode(codeFormat, codeValue),
+            isId = isId,
+            codeValue = codeValue,
             notes = notes,
             front = front.change,
             back = back.change,
@@ -201,22 +199,15 @@ internal fun CardEditScreen(state: VaultState.Open, key: Screen.CardEdit, naviga
                 leading = { owner -> owner?.let { ColorDot(it.color) } },
                 modifier = Modifier.testTag("card-owner"),
             )
-            Picker(
-                label = stringResource(Res.string.card_type),
-                selected = CardType.of(viewModel.type),
-                options = CardType.entries,
-                optionLabel = { it.label() },
-                onSelect = { viewModel.type = it.id },
-                modifier = Modifier.testTag("card-type"),
-            )
-            Picker(
-                label = stringResource(Res.string.card_code_format),
-                selected = CodeFormat.of(viewModel.codeFormat),
-                options = CodeFormat.entries,
-                optionLabel = { it.label() },
-                onSelect = { viewModel.codeFormat = it.id },
-                modifier = Modifier.testTag("card-format"),
-            )
+            Row(
+                Modifier.fillMaxWidth()
+                    .toggleable(value = viewModel.isId, role = Role.Switch) { viewModel.isId = it }
+                    .testTag("card-id"),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(stringResource(Res.string.card_identity), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+                Switch(checked = viewModel.isId, onCheckedChange = null)
+            }
             OutlinedTextField(
                 value = viewModel.codeValue,
                 onValueChange = { viewModel.codeValue = it },

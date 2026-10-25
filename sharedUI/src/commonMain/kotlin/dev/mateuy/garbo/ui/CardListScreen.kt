@@ -188,9 +188,10 @@ private fun CardRow(card: Card, owner: Owner?, scan: Int, onClick: () -> Unit) {
                 }
             }
             Spacer(Modifier.width(16.dp))
-            Column(Modifier.weight(1f)) {
-                Text(card.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(card.cardType.label(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(card.name, Modifier.weight(1f), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (card.isId) {
+                IdBadge()
+                Spacer(Modifier.width(12.dp))
             }
             if (owner != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {

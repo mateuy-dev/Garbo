@@ -17,8 +17,8 @@ class FormatTest {
             type: membership
             expires: 2030-01-01
             code:
-              format: qr
               value: abc
+              format: qr
               colour: red
             """.trimIndent(),
         )
@@ -31,24 +31,39 @@ class FormatTest {
     }
 
     @Test
-    fun unknownTypeShowsAsOtherAndIsWrittenBack() {
+    fun unknownTypeIsARegularCardAndIsWrittenBack() {
         val card = Card.parse("cardId: c1\nname: Passport\ntype: passport\n")
-        assertEquals(CardType.OTHER, card.cardType)
+        assertFalse(card.isId)
         val reread = Card.parse(card.copy(notes = "renew").toYaml())
         assertEquals("passport", reread.type)
         assertEquals("renew", reread.notes)
     }
 
     @Test
-    fun unknownCodeFormatShowsAsText() {
+    fun idTypeMarksAnIdentityDocument() {
+        assertTrue(Card.parse("cardId: c1\nname: DNI\ntype: id\n").isId)
+        val regular = Card.parse("cardId: c1\nname: Gym\n")
+        assertFalse(regular.isId)
+        assertFalse("type" in Yaml.load(regular.toYaml()))
+    }
+
+    @Test
+    fun unknownCodeFormatIsKept() {
         val card = Card.parse("cardId: c1\nname: X\ncode:\n  format: maxicode\n  value: '1'\n")
-        assertEquals(CodeFormat.TEXT, card.code!!.codeFormat)
+        assertNull(card.code!!.codeFormat)
         assertEquals("maxicode", Card.parse(card.toYaml()).code!!.format)
     }
 
     @Test
+    fun codeWithoutFormat() {
+        val card = Card.parse("cardId: c1\nname: X\ncode:\n  value: '1'\n")
+        assertNull(card.code!!.format)
+        assertEquals(CodeFormat.CODABAR, Card.parse("cardId: c1\nname: X\ncode:\n  value: '1'\n  format: codabar\n").code!!.codeFormat)
+    }
+
+    @Test
     fun codeValueIsWrittenAsText() {
-        val card = Card(cardId = "c1", name = "Shop", code = CardCode(CodeFormat.EAN13.id, "2401234567890"))
+        val card = Card(cardId = "c1", name = "Shop", code = CardCode("2401234567890", CodeFormat.EAN13.id))
         val code = Yaml.load(card.toYaml())["code"].asYamlMap()!!
         assertEquals("ean13", code["format"])
         assertEquals("2401234567890", code["value"])
